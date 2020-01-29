@@ -1,3 +1,6 @@
+https://medium.com/containermind/a-beginners-guide-to-kubernetes-7e8ca56420b6
+
+
 Master: t2.medium
 Worker1: t2.micro (free)
 Worker2: t2.micro (free)
@@ -47,9 +50,55 @@ kubeadm join 172.31.3.2:6443 --token skwpel.mylzyxmv45p649j2 \
 16. Run "kubectl get nodes" in master to chk the newly added worker nodes
 17. Run: "kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"" to install network plugin
 so that master and workers can communicate with each other.
+[The Weave Net addon for Kubernetes comes with a Network Policy Controller]
 18. Run "kubectl get nodes" in master to chk the newly status of added worker nodes. It shoud be 'ready'
 19. Run 'kubectl get pods --all-namespaces' to get details of kubernetes components
-20. 
+20. chk namespaces: "kubectl get namespaces"
+21. Create Namespace:
+ vi dev.yml
+   apiVersion: v1
+   kind: Namespace
+   metadata:
+       name: development
+create namespace: "kubectl create -f dev.yml"
+verify namespace: "kubectl get ns  "
+22. Create Pod:
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: nginx-deployment
+    labels:
+      name: nginx
+  spec:
+    containers:
+    - name: nginx
+      image: nginx: latest
+      ports:
+      - containerPort: 80
+create Pod: "kubectl apply -f pod.yml"
+verify pod: "kubectl get pods"
+23. we need to open some port to allow communication to k8s cluster in aws portal
+24. Run "kubectl describe pod nginx-deployment"   [nginx-depl is the pod name]
+25. Create namespace with a command instead of yaml file: "kubectl create namespace quota-mem-cpu-example"
+26. create a yaml for allocating resourcequota:
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-demo
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+27. Apply the quota:
+"kubectl apply -f limits.yml --namespace=quota-mem-cpu-example"
+28. Check if really the quota has been allocated to namespace:
+"kubectl get resourcequota mem-cpu-demo --namespace=quota-mem-cpu-example --output=yaml"
+29. 
+
+
+
 ==========================================================================================
 [root@ip-172-31-8-5 ~]# history
     1  yum install -y yum-utils   device-mapper-persistent-data   lvm2
