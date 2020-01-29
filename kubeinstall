@@ -78,7 +78,7 @@ verify namespace: "kubectl get ns  "
 create Pod: "kubectl apply -f pod.yml"
 verify pod: "kubectl get pods"
 23. we need to open some port to allow communication to k8s cluster in aws portal
-24. Run "kubectl describe pod nginx-deployment"   [nginx-depl is the pod name]
+24. Run "kubectl describe pod nginx-deployment"   [nginx-depl.. is the pod name]
 25. Create namespace with a command instead of yaml file: "kubectl create namespace quota-mem-cpu-example"
 26. create a yaml for allocating resourcequota:
 apiVersion: v1
@@ -93,10 +93,51 @@ spec:
     limits.memory: 2Gi
 27. Apply the quota:
 "kubectl apply -f limits.yml --namespace=quota-mem-cpu-example"
-28. Check if really the quota has been allocated to namespace:
+28. Check if really the quota has been allocated to namespace (output in yaml format):
 "kubectl get resourcequota mem-cpu-demo --namespace=quota-mem-cpu-example --output=yaml"
-29. 
+29. Apply Pod to a new namespace:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota-mem-cpu-demo
+spec:
+  containers:
+  - name: quota-mem-cpu-demo-cotr
+    image: nginx
+    resources:
+      limits:
+        memory: "800Mi"
+        cpu: "800m"
+      requests:
+        memory: "600Mi"
+        cpu: "400m"
+30. Run: "kubectl apply -f deploy.yml --namespace=quota-mem-cpu-example"
+31. chk used quota by running:
+"kubectl get resourcequota mem-cpu-demo --namespace=quota-mem-cpu-example --output=yaml"
+32. deploy2.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota-mem-cpu-demo-2
+spec:
+  containers:
+  - name: quota-mem-cpu-demo-cotr2
+    image: nginx
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "800m"
+      requests:
+        memory: "700Mi"
+        cpu: "400m"
+        
+33. kubectl apply -f deploy2.yml --namespace=quota-mem-cpu-example
+Output:
+Error from server (Forbidden): error when creating "deploy2.yml": pods "quota-mem-cpu-demo-2" is forbidden: exceeded quota: mem-cpu-demo, requested: requests.memory=700Mi, used: requests.memory=600Mi, limited: requests.memory=1Gi       
 
+We have eror because we have limited memomy in namespace to 1gb, and pod1 in deploy.yml has taken 400mb, and pod2 in deploy2.yml is requesting for 700mb.
+
+34. 
 
 
 ==========================================================================================
