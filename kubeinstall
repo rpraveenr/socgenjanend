@@ -42,9 +42,14 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join 172.31.3.2:6443 --token skwpel.mylzyxmv45p649j2 \
     --discovery-token-ca-cert-hash sha256:fde49b1c3291330b7c8971db5714e762dda4bdad2b83c90fb2cdf05b5ec74b17
 ]
-14. Run the given commands in master and commands in workers
-15. Run "kubectl get nodes" in master to chk the newly added worker nodes
-16. 
+14. Go to master node and open 'security groups' and add an entry for port 6443
+15. Run the given commands in master and commands in workers
+16. Run "kubectl get nodes" in master to chk the newly added worker nodes
+17. Run: "kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"" to install network plugin
+so that master and workers can communicate with each other.
+18. Run "kubectl get nodes" in master to chk the newly status of added worker nodes. It shoud be 'ready'
+19. Run 'kubectl get pods --all-namespaces' to get details of kubernetes components
+20. 
 ==========================================================================================
 [root@ip-172-31-8-5 ~]# history
     1  yum install -y yum-utils   device-mapper-persistent-data   lvm2
