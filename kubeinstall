@@ -17,9 +17,34 @@ https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-ku
 7. hostnamectl set-hostname --static k8snode2 (run in worker2)
 8. Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in master)
 9. Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in worker 1 & 2)
-10. 
+10. Edit /ect/hosts and add private ips of manager and workers in all the machines ath the end of the file
+e.g:
+172.31.3.2 k8smaster
+172.31.35.229 k8snode2
+172.31.40.66 k8snode1
+11. Run "reboot" command in all 3 machines
+12. Run "kubeadm init" in master machine
+13. We will see below msg:
+[Your Kubernetes control-plane has initialized successfully!
 
+To start using your cluster, you need to run the following as a regular user:
 
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.31.3.2:6443 --token skwpel.mylzyxmv45p649j2 \
+    --discovery-token-ca-cert-hash sha256:fde49b1c3291330b7c8971db5714e762dda4bdad2b83c90fb2cdf05b5ec74b17
+]
+14. Run the given commands in master and commands in workers
+15. Run "kubectl get nodes" in master to chk the newly added worker nodes
+16. 
 ==========================================================================================
 [root@ip-172-31-8-5 ~]# history
     1  yum install -y yum-utils   device-mapper-persistent-data   lvm2
