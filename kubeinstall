@@ -4,20 +4,21 @@ Worker2: t2.micro (free)
 
 1. Save the .pem file while creating the aws machine.
 2. use puttygen and load the pem file and save as private key .ppk file
-3. Then, get the public ip and connect using putty. pass 
-
-
+3. Then, get the public ip and connect using putty. pass the ppk file in SSh->AUTH section (username : centos) connect to master and worker nodes
+4. run the below mentioned commands to install docker engine and kubernetes
 Install docker from this url:
 https://docs.docker.com/install/linux/docker-ce/centos/
 
 Install from this website:
 https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
 
--hostnamectl set-hostname --static k8smaster
--hostnamectl set-hostname --static k8snode1 (run in worker1)
--hostnamectl set-hostname --static k8snode2 (run in worker2)
--Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in master)
--Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in node1 & 2)
+5. Run: hostnamectl set-hostname --static k8smaster in master
+6. hostnamectl set-hostname --static k8snode1 (run in worker1)
+7. hostnamectl set-hostname --static k8snode2 (run in worker2)
+8. Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in master)
+9. Run "vi /etc/cloud/cloud.cfg" and add "preserve_hostname: true" at the end (in worker 1 & 2)
+10. 
+
 
 ==========================================================================================
 [root@ip-172-31-8-5 ~]# history
