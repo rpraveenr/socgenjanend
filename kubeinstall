@@ -137,7 +137,82 @@ Error from server (Forbidden): error when creating "deploy2.yml": pods "quota-me
 
 We have eror because we have limited memomy in namespace to 1gb, and pod1 in deploy.yml has taken 400mb, and pod2 in deploy2.yml is requesting for 700mb.
 
-34. 
+34. Deployment (namespace+pod)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: nginx
+    template:
+      metadata:
+        labels:
+          app: nginx
+      spec:
+        containers:
+        - name: nginx
+          image: nginx:1.7.9
+          ports:
+          - containerPort: 80
+
+35. Run: "kubectl apply -f deployment.yml"
+36. kubectl get deployment
+37. Status of deployment: Run "kubectl rollout status deployment.v1.apps/nginx-deployment"
+Output: deployment "nginx-deployment" successfully rolled out
+38. kubectl get rs
+Output:
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-54f57cf6bf   3         3         3       5m43s
+39. kubectl get pods --all-namespaces
+40. Rolling Updates: To update an image in a container:
+"kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1 --record=true"
+41. Get status of deployment:
+"kubectl rollout status deployment.v1.apps/nginx-deployment"
+42. 
+kubectl get rs
+Output:
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-54f57cf6bf   0         0         0       21m
+nginx-deployment-56f8998dbc   3         3         3       106s
+43. kubectl get pod
+44. Get rollout history
+Run "kubectl rollout history deployment.v1.apps/nginx-deployment"
+deployment.apps/nginx-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1 --record=true
+
+45. kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
+Output:
+deployment.apps/nginx-deployment with revision #2
+Pod Template:
+  Labels:       app=nginx
+        pod-template-hash=56f8998dbc
+  Annotations:  kubernetes.io/change-cause: kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1 --record=true
+  Containers:
+   nginx:
+    Image:      nginx:1.9.1
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Environment:        <none>
+    Mounts:     <none>
+  Volumes:      <none>
+
+46. kubectl rollout undo deployment.v1.apps/nginx-deployment
+47. kubectl get pods
+Output:
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment                    1/1     Running   0          125m
+nginx-deployment-56f8998dbc-62wrp   1/1     Running   0          7m35s
+nginx-deployment-56f8998dbc-sg6jz   1/1     Running   0          7m51s
+nginx-deployment-56f8998dbc-znl8n   1/1     Running   0          7m43s
+48. kubectl describe "nginx-deployment-56f8998dbc-62wrp"
+49.  
 
 
 ==========================================================================================
